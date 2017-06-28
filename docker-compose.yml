@@ -226,7 +226,7 @@ services:
         #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
 
     makecerts:
-        restart: never
+        #restart: never
         image: chiminey/chiminey-makecerts:latest-prismdemo
         volumes:
             - ./chiminey-nginx/certs:/opt/certs
