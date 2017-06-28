@@ -50,13 +50,13 @@ http://docs.docker.com/compose)
 
 8. List existing smart connectors
 ```
-    $ ./listsc
+    $ ./listscs
 ```
 
 9. Activate smart connectors from the tutorials at http://chiminey.readthedocs.org. The syntax to add any of the smart connectors that are included with the platform is ```$ ./activatesc smart-connector-name```. Agree to activate the smart connector when prompted.
 
 ```
-    $ /activatesc hrmclite
+    $ /activatesc prism
 ```
 
 This project is working reasonably well as a demo, but IS NOT FOR PRODUCTION USE
