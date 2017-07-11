@@ -3,415 +3,83 @@ version: "2"
 services:
 
     chiminey:
-        restart: on-failure:5
+        extends:
+            file: docker-compose.yml
+            service: chiminey
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
-        #image: chiminey
-        # links:
-        #     #- db:db
-        #     #- redis:redis
-        #     - nginxamb:nginxamb
-        command:
-            - "gunicorn"
-        ports:
-            - "50000:22"
-        expose:
-            - "22"
-        volumes:
-        # chiminey holds the canonical versions of srcstore and chimineystore
-            - srcstore:/opt/chiminey/current
-            - chimineystore:/var/chiminey/remotesys
-            - /etc/localtime:/etc/localtime:ro
-        depends_on:
-            - db
-            - redis
-            #- logstash
-        environment:
-            - DJANGO_DEBUG=$DJANGO_DEBUG
-            - APIHOST=http://nginx/
-            - CHIMINEY_LOG_FILE=$CHIMINEY_LOG_FILE
-            - LOGGER_LEVEL=$CHIMINEY_LOGGER_LEVEL
-            - GUNICORN_LOG_LEVEL=$GUNICORN_LOG_LEVEL
-            - CELERY_POLL_TIME=$CELERY_POLL_TIME
-            - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        env_file: .env
-        networks:
-            - chiminey
-        logging:
-            driver: json-file
-            options:
-               max-size: 50m
-               #tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
 
     celerydefault:
-        restart: on-failure:5
+        extends:
+            file: docker-compose.yml
+            service: celerydefault
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
-        command:
-            - "celery"
-        volumes:
-            - varstore:/var/run/chiminey
-            - /etc/localtime:/etc/localtime:ro
-        volumes_from:
-            - chiminey
-        depends_on:
-            - db
-            - redis
-            #- logstash
-            - chiminey
-        environment:
-            - CELERY_QUEUE=default
-            - DJANGO_DEBUG=$DJANGO_DEBUG
-            - CHIMINEY_LOG_FILE=$CELERY_LOG_FILE
-            - LOGGER_LEVEL=$CHIMINEY_LOGGER_LEVEL
-            - CELERY_LOG_LEVEL=$CELERY_LOGGER_LEVEL
-            - CELERY_POLL_TIME=$CELERY_POLL_TIME
-            - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-            # - CELERY_SOFT_TIME_LIMIT=$CELERY_SOFT_TIME_LIMIT
-            # - CELERY_TIME_LIMIT=$CELERY_TIME_LIMIT
-        env_file: .env
-        networks:
-            - chiminey
-        logging:
-            driver: json-file
-            options:
-                max-size: 50m
-                #tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
 
     celeryhightasks:
-        restart: on-failure:5
+        extends:
+            file: docker-compose.yml
+            service: celeryhightasks
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
-        command:
-            - "celery"
-        volumes_from:
-            - chiminey
-        volumes:
-            - varstore:/var/run/chiminey
-            - /etc/localtime:/etc/localtime:ro
-        depends_on:
-            - db
-            - redis
-            #- logstash
-            - chiminey
-        environment:
-            - CELERY_QUEUE=hightasks
-            - DJANGO_DEBUG=$DJANGO_DEBUG
-            - LOGGER_LEVEL=$CHIMINEY_LOGGER_LEVEL
-            - CHIMINEY_LOG_FILE=$CELERY_LOG_FILE
-            - CELERY_LOG_LEVEL=$CELERY_LOGGER_LEVEL
-            - CELERY_POLL_TIME=$CELERY_POLL_TIME
-            - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        env_file: .env
-        networks:
-            - chiminey
-        logging:
-            driver: json-file
-            options:
-                max-size: 50m
-                #tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-
 
     beat:
-        restart: on-failure:5
+        extends:
+            file: docker-compose.yml
+            service: beat
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
-        command:
-            - "beat"
-        depends_on:
-            - db
-            - redis
-            - chiminey
-            - celerydefault
-            - celeryhightasks
-        volumes_from:
-            - chiminey
-        volumes:
-            - varstore:/var/run/beat
-            - /etc/localtime:/etc/localtime:ro
-        environment:
-            - DJANGO_DEBUG=$DJANGO_DEBUG
-            - CHIMINEY_LOG_FILE=$BEAT_LOG_FILE
-            - LOGGER_LEVEL=$CHIMINEY_LOGGER_LEVEL
-            - CELERY_LOG_LEVEL=$BEAT_LOGGER_LEVEL
-            - CELERY_POLL_TIME=$CELERY_POLL_TIME
-            - DB_ENV_POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        env_file: .env
-        networks:
-            - chiminey
-        logging:
-            driver: json-file
-            options:
-                max-size: 50m
-                #tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+
 
     nginx:
-        restart: on-failure:5
+        extends:
+            file: docker-compose.yml
+            service: nginx
         build: chiminey-nginx
-        image: chiminey/chiminey-nginx:latest
-        depends_on:
-            - db
-            - redis
-            - chiminey
-        volumes_from:
-            - chiminey:ro
-        volumes:
-            - varstore:/var/run/beat
-            - ./chiminey-nginx/certs:/opt/certs:ro
-        # expose:
-        #     - "5601"
-        #     - "80"
-        #     - "443"
-        #     - "5555"
-        ports:
-            - "80:80"
-            - "443:443"
-            - "5601:5601"
-            - "5555:5555"
-        networks:
-            - chiminey
-        env_file: .env
 
     db:
-        restart: on-failure:5
-        image: postgres:9.4.5
-        volumes:
-            - dbstore:/var/lib/postgresql/data
-        environment:
-            - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-        networks:
-            - chiminey
-        env_file: .env
-        #logging:
-        #    driver: gelf
-        #    options:
-        #        gelf-address: udp://localhost:12201
-        #        #tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-
+        extends:
+            file: docker-compose.yml
+            service: db
+            
     redis:
-        restart: on-failure:5
-        image: redis:3.0.5
-        volumes:
-            - redisstore:/data
-        expose:
-            - "6379"
-        networks:
-            - chiminey
-        env_file: .env
-        #logging:
-        #    driver: gelf
-        #    options:
-        #        gelf-address: udp://localhost:12201
-        #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        extends:
+            file: docker-compose.yml
+            service: redis
 
 
     monitor:
-        restart: on-failure:5
-        build: chiminey-monitor
-        image: chiminey/chiminey-monitor:latest
-        depends_on:
-            - redis
-            - celerydefault
-            - celeryhightasks
-        expose:
-            - "5555"
-        environment:
-            - CELERY_BROKER_URL=redis://redis:6379//
-        command:
-            - "--broker_api=redis://redis:6379//"
-            #   - "--broker=redis://redis:6379//"
-            - "--basic_auth=chiminey:pass"
-            #    - "--persistent=True"
-        networks:
-            - chiminey
-        env_file: .env
-        #logging:
-        #    driver: gelf
-        #    options:
-        #        gelf-address: udp://localhost:12201
-        #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
+        extends:
+            file: docker-compose.yml
+            service: monitor
 
     makecerts:
-        restart: never
-        build: makecerts
-        image: chiminey/chiminey-makecerts:latest
-        volumes:
-            - ./chiminey-nginx/certs:/opt/certs
-        command:
-            "/run.sh"
-        networks:
-            - chiminey
-        env_file: .env
-        #logging:
-        #    driver: gelf
-        #    options:
-        #        gelf-address: udp://localhost:12201
-        #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-
+        extends:
+            file: docker-compose.yml
+            service: makecerts
 
     ssh:
-        image: million12/ssh
-        ports:
-            - "60000:22"
-        environment:
-            - ROOT_PASS=$SSH_PASS
-        depends_on:
-            - chiminey
-        volumes_from:
-            - chiminey
-        networks:
-            - chiminey
-        env_file: .env
-        #logging:
-        #    driver: gelf
-        #    options:
-        #        gelf-address: udp://localhost:12201
-        #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
-
-
-    #elasticsearch:
-    #    restart: always
-    #    image: elasticsearch:2.3.1
-    #    networks:
-    #        - chiminey
-    #    volumes:
-    #        #u- elasticstore:/opt/elasticsearch/data
-
-    #logstash:
-    #    restart: always
-    #    image: logstash
-    #    depends_on:
-    #      - elasticsearch
-    #    command: |
-    #      -e '
-    #      input {
-    #        # Default port is 12201/udp
-    #        gelf { }
-    #        # This generates one test event per minute.
-    #        # It is great for debugging, but you might
-    #        # want to remove it in production.
-    #        heartbeat { }
-    #      }
-    #      # The following filter is a hack!
-    #      # The "de_dot" filter would be better, but it
-    #      # is not pre-installed with logstash by default.
-    #      filter {
-    #        ruby {
-    #          code => "
-    #            event.to_hash.keys.each { |k| event[ k.gsub('"'.'"','"'_'"') ] = event.remove(k) if k.include?'"'.'"' }
-    #          "
-    #        }
-    #      }
-    #      output {
-    #        elasticsearch {
-    #          hosts => ["elasticsearch:9200"]
-    #        }
-
-    #        #stdout {
-    #        #  codec => line
-    #        #}
-
-    #      }'
-    #    ports:
-    #        - "12201:12201/udp"
-    #    networks:
-    #        - chiminey
-    #    logging:
-    #        driver: json-file
-    #        options:
-    #           max-size: 50m
-
-    #kibana:
-    #    restart: always
-    #    image: kibana
-    #    env_file: .env
-    #    depends_on:
-    #        - elasticsearch
-    #        - logstash
-    #    expose:
-    #        - 5601
-    #    #ports:
-    #    #    - "$KIBANA_PORT:5601"
-    #    environment:
-    #        - ELASTICSEARCH_URL=http://elasticsearch:9200
-    #        - NODE_OPTIONS=--max-old-space-size=300
-    #    networks:
-    #        - chiminey
-
-
-    # elasticsearch:
-    #  restart: on-failure:5
-    #  image: denibertovic/elasticsearch
-    #  ports:
-    #      - 9200:9200
-    #      - 9300:9300
-    #  volumes:
-    #      - ./logs/elasticsearch:/opt/elasticsearch/logs
-    #      - ./config-examples/elasticsearch:/opt/elasticsearch/config
-    #      - ./data/elasticsearch:/opt/elasticsearch/data
-    #
-    # logstash:
-    #   restart: on-failure:5
-    #   image: denibertovic/logstash
-    #   links:
-    #       - elasticsearch
-    #   volumes:
-    #       - ./config-examples/logstash:/opt/conf
-    #       - ./certs:/opt/certs
-    #       - ./logs/logstash:/opt/logs
-    #   volumes_from:
-    #       - logsstore
-    #
-    # kibana:
-    #   restart: on-failure:5
-    #   image: denibertovic/kibana
-    #   links:
-    #       - elasticsearch:elasticsearch
-    #   volumes:
-    #       - ./logs/kibana:/logs
-    #       - ./config-examples/kibana:/kibana/config
-    #   expose:
-
-    # #       - 5601
-    # cadvisor:
-    #    restart: on-failure:5
-    #    privileged: true
-    #    image: google/cadvisor:latest
-    #    volumes:
-    #      - /:/rootfs:ro
-    #      - /var/run:/var/run:rw
-    #      - /sys:/sys:ro
-    #      - /var/lib/docker/:/var/lib/docker:ro
-    #      - /cgroup:/cgroup:ro
-    #    #command:
-    #      #- '-storage_driver="elasticsearch"'
-    #      #- "-alsologtostderr=true"
-    #      #- '-storage_driver_es_host="https://elasticsearch:9200"'
-    #    expose:
-    #      - 8080
-
-volumes:
-    srcstore:
-        driver: local
-
-    logstore:
-        driver: local
-
-    varstore:
-        driver: local
-
-    dbstore:
-        driver: local
-
-    chimineystore:
-        driver: local
-
-    redisstore:
-        driver: local
-
-    elasticstore:
-        driver: local
-
-networks:
-    chiminey:
-        driver: bridge
+        extends:
+            file: docker-=compose.yml
+            service: ssh
+# volumes:
+#     srcstore:
+#         driver: local
+#
+#     logstore:
+#         driver: local
+#
+#     varstore:
+#         driver: local
+#
+#     dbstore:
+#         driver: local
+#
+#     chimineystore:
+#         driver: local
+#
+#     redisstore:
+#         driver: local
+#
+#     elasticstore:
+#         driver: local
+#
+# networks:
+#     chiminey:
+#         driver: bridge
