@@ -7,47 +7,79 @@ services:
             file: docker-compose.yml
             service: chiminey
         build: chiminey-portal
+        depends_on:
+            - db
+            - redis
+
 
     celerydefault:
         extends:
             file: docker-compose.yml
             service: celerydefault
         build: chiminey-portal
+        volumes_from:
+            - chiminey
+        depends_on:
+            - db
+            - redis
+            - chiminey
 
     celeryhightasks:
         extends:
             file: docker-compose.yml
             service: celeryhightasks
         build: chiminey-portal
+        volumes_from:
+            - chiminey
+        depends_on:
+            - db
+            - redis
+            - chiminey
 
     beat:
         extends:
             file: docker-compose.yml
             service: beat
         build: chiminey-portal
-
+        depends_on:
+            - db
+            - redis
+            - chiminey
+            - celerydefault
+            - celeryhightasks
+        volumes_from:
+            - chiminey
 
     nginx:
         extends:
             file: docker-compose.yml
             service: nginx
         build: chiminey-nginx
+        depends_on:
+            - db
+            - redis
+            - chiminey
+        volumes_from:
+            - chiminey:ro
 
     db:
         extends:
             file: docker-compose.yml
             service: db
-            
+
     redis:
         extends:
             file: docker-compose.yml
             service: redis
 
-
     monitor:
         extends:
             file: docker-compose.yml
             service: monitor
+        depends_on:
+            - redis
+            - celerydefault
+            - celeryhightasks
 
     makecerts:
         extends:
@@ -58,6 +90,10 @@ services:
         extends:
             file: docker-=compose.yml
             service: ssh
+        depends_on:
+            - chiminey
+        volumes_from:
+            - chiminey
 # volumes:
 #     srcstore:
 #         driver: local
