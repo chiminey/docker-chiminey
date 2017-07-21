@@ -5,7 +5,6 @@ services:
     chiminey:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
         #image: chiminey
         # links:
         #     #- db:db
@@ -19,9 +18,9 @@ services:
             - "22"
         volumes:
         # chiminey holds the canonical versions of srcstore and chimineystore
+            - srcstore:/opt/chiminey/current
             - chimineystore:/var/chiminey/remotesys
             - /etc/localtime:/etc/localtime:ro
-            #- srcstore:/opt/chiminey/current
         depends_on:
             - db
             - redis
@@ -46,7 +45,6 @@ services:
     celerydefault:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
         command:
             - "celery"
         volumes:
@@ -81,7 +79,6 @@ services:
     celeryhightasks:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
         command:
             - "celery"
         volumes_from:
@@ -115,7 +112,6 @@ services:
     beat:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
         command:
             - "beat"
         depends_on:
@@ -148,7 +144,6 @@ services:
     nginx:
         restart: on-failure:5
         build: chiminey-nginx
-        image: chiminey/chiminey-nginx:latest
         depends_on:
             - db
             - redis
@@ -208,7 +203,6 @@ services:
     monitor:
         restart: on-failure:5
         build: chiminey-monitor
-        image: chiminey/chiminey-monitor:latest
         depends_on:
             - redis
             - celerydefault
@@ -234,7 +228,6 @@ services:
     makecerts:
         restart: "no"
         build: makecerts
-        image: chiminey/chiminey-makecerts:latest
         volumes:
             - ./chiminey-nginx/certs:/opt/certs
         command:
