@@ -4,7 +4,7 @@ services:
 
     chiminey:
         restart: on-failure:5
-        image: chiminey/chiminey-portal:1.3.0
+        image: chiminey/chiminey-portal:uppaal
         #image: chiminey
         # links:
         #     #- db:db
@@ -45,7 +45,7 @@ services:
 
     celerydefault:
         restart: on-failure:5
-        image: chiminey/chiminey-portal:1.3.0
+        image: chiminey/chiminey-portal:uppaal
         command:
             - "celery"
         volumes:
@@ -79,7 +79,7 @@ services:
 
     celeryhightasks:
         restart: on-failure:5
-        image: chiminey/chiminey-portal:1.3.0
+        image: chiminey/chiminey-portal:uppaal
         command:
             - "celery"
         volumes_from:
@@ -112,7 +112,7 @@ services:
 
     beat:
         restart: on-failure:5
-        image: chiminey/chiminey-portal:1.3.0
+        image: chiminey/chiminey-portal:uppaal
         command:
             - "beat"
         depends_on:
@@ -144,7 +144,7 @@ services:
 
     nginx:
         restart: on-failure:5
-        image: chiminey/chiminey-nginx:1.3.0
+        image: chiminey/chiminey-nginx:uppaal
         depends_on:
             - db
             - redis
@@ -203,7 +203,7 @@ services:
 
     monitor:
         restart: on-failure:5
-        image: chiminey/chiminey-monitor:1.3.0
+        image: chiminey/chiminey-monitor:uppaal
         depends_on:
             - redis
             - celerydefault
@@ -227,7 +227,7 @@ services:
         #        tag: "{{.ImageName}}/{{.Name}}/{{.ID}}"
 
     makecerts:
-        image: chiminey/chiminey-makecerts:1.3.0
+        image: chiminey/chiminey-makecerts:uppaal
         volumes:
             - ./chiminey-nginx/certs:/opt/certs
         command:
@@ -369,7 +369,7 @@ services:
     # cadvisor:
     #    restart: on-failure:5
     #    privileged: true
-    #    image: google/cadvisor:1.3.0
+    #    image: google/cadvisor:uppaal
     #    volumes:
     #      - /:/rootfs:ro
     #      - /var/run:/var/run:rw
