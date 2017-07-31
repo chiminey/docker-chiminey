@@ -18,9 +18,10 @@ services:
             - "22"
         volumes:
         # chiminey holds the canonical versions of srcstore and chimineystore
-            - srcstore:/opt/chiminey/current
             - chimineystore:/var/chiminey/remotesys
+            - ./package:/var/chiminey/package:ro
             - /etc/localtime:/etc/localtime:ro
+            #- srcstore:/opt/chiminey/current
         depends_on:
             - db
             - redis
