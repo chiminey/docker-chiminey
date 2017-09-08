@@ -67,3 +67,4 @@ redis==2.10.3
 hiredis==0.2.0
 django-tastypie==0.9.15
 dumb-init==1.0.0
+certifi
