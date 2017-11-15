@@ -5,7 +5,7 @@ services:
     chiminey:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
+        image: chiminey/chiminey-portal:general_connector-latest
         #image: chiminey
         # links:
         #     #- db:db
@@ -46,7 +46,7 @@ services:
     celerydefault:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
+        image: chiminey/chiminey-portal:general_connector-latest
         command:
             - "celery"
         volumes:
@@ -81,7 +81,7 @@ services:
     celeryhightasks:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
+        image: chiminey/chiminey-portal:general_connector-latest
         command:
             - "celery"
         volumes_from:
@@ -115,7 +115,7 @@ services:
     beat:
         restart: on-failure:5
         build: chiminey-portal
-        image: chiminey/chiminey-portal:latest
+        image: chiminey/chiminey-portal:general_connector-latest
         command:
             - "beat"
         depends_on:
@@ -148,7 +148,7 @@ services:
     nginx:
         restart: on-failure:5
         build: chiminey-nginx
-        image: chiminey/chiminey-nginx:latest
+        image: chiminey/chiminey-nginx:general_connector-latest
         depends_on:
             - db
             - redis
@@ -208,7 +208,7 @@ services:
     monitor:
         restart: on-failure:5
         build: chiminey-monitor
-        image: chiminey/chiminey-monitor:latest
+        image: chiminey/chiminey-monitor:general_connector-latest
         depends_on:
             - redis
             - celerydefault
@@ -234,7 +234,7 @@ services:
     makecerts:
         restart: "no"
         build: makecerts
-        image: chiminey/chiminey-makecerts:latest
+        image: chiminey/chiminey-makecerts:general_connector-latest
         volumes:
             - ./chiminey-nginx/certs:/opt/certs
         command:
@@ -376,7 +376,7 @@ services:
     # cadvisor:
     #    restart: on-failure:5
     #    privileged: true
-    #    image: google/cadvisor:latest
+    #    image: google/cadvisor:general_connector-latest
     #    volumes:
     #      - /:/rootfs:ro
     #      - /var/run:/var/run:rw

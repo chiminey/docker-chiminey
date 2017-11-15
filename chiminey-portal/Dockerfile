@@ -50,7 +50,7 @@ RUN mkdir -p /var/chiminey/remotesys
 
 # install chiminey
 ENV CHIMINEY_URL https://github.com/chiminey/chiminey.git
-ENV CHIMINEY_BRANCH master
+ENV CHIMINEY_BRANCH general_connector
 
 RUN echo 'Cloning Chiminey' && cd /opt/chiminey &&  git clone -b ${CHIMINEY_BRANCH} ${CHIMINEY_URL} current
 
