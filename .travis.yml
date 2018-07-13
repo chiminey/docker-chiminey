@@ -43,7 +43,7 @@ script:
       - docker ps
       - docker-compose -f smoketest.yml build
       - docker-compose -f smoketest.yml run test
-      - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
       - VERSION=`cat version.txt`
       - if [ "$VERSION" == ""  ]; then VERSION=latest; fi
       - CHIMINEY_PORTAL=$DOCKER_USERNAME/chiminey-portal:"$VERSION"
