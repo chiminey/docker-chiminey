@@ -39,7 +39,7 @@ RUN groupadd -r nginx && adduser --home /opt/chiminey --disabled-password --ingr
 
 # install python prereqs
 COPY requirements.txt /opt/chiminey/requirements.txt
-RUN /usr/bin/pip install -U pip && pip install -r /opt/chiminey/requirements.txt && pip freeze > /opt/chiminey/installed.packagelist
+RUN /usr/bin/pip install -U pip==9.0.1 && pip install -r /opt/chiminey/requirements.txt && pip freeze > /opt/chiminey/installed.packagelist
 COPY boto.cfg /etc/boto.cfg
 
 # setup blank known_hosts for ssh connectors
