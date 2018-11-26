@@ -4,7 +4,7 @@ MAINTAINER  Ian Thomas <ianedwardthomas@gmail.com>
 
 RUN apt-get -y update && apt-get -y install python-dev python-pip
 
-RUN pip install https://github.com/mher/flower/zipball/0.9 redis
+RUN pip install https://github.com/mher/flower/zipball/0.8 redis
 
 EXPOSE 5555
 
