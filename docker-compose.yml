@@ -170,7 +170,7 @@ services:
 
     db:
         restart: on-failure:5
-        image: postgres:9.4.5
+        image: postgres:9.4
         volumes:
             - dbstore:/var/lib/postgresql/data
         environment:
