@@ -20,7 +20,7 @@ django-nose==1.4.3
 django-registration==1.0 #apt: 1.0
 #-e git+https://github.com/grischa/django-tastypie.git@testing-mytardis-deployment#egg=django-tastypie
 django-user-agents==0.2.2
-ecdsa==0.11 #apt: 0.10
+ecdsa==0.13.3 #apt: 0.10
 #elementtree
 gunicorn
 gevent
